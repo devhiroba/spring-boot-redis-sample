@@ -19,12 +19,11 @@ public class UserDao implements IUserDao {
     private static final String DELIMITER = ":";
 
     private final Gson gson = new Gson();
-//    private final RedisCommands<String, String> redisSyncCommands;
     private final RedisClusterCommands<String, String> redisSyncCommands;
 
     @Autowired
-    public UserDao(RedisClusterClient redisClusterClient) {
-        this.redisSyncCommands = redisClusterClient.connect().sync();
+    public UserDao(StatefulRedisClusterConnection<String, String> connection) {
+        this.redisSyncCommands = connection.sync();
     }
 
     private String key(long userId) {

@@ -3,6 +3,7 @@ package com.bo.sample.redis.config;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.cluster.RedisClusterClient;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ public class RedisConfig {
     private final int DATABASE;
     private final String PASSWORD;
     private final long TIMEOUT;
+
 
     public RedisConfig(
             @Value("${redis.hostname}") String hostname,
@@ -30,22 +32,17 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisClusterClient redisClient() {
-
+    public StatefulRedisClusterConnection redisClient() {
         // オプション設定
         RedisURI redisUri = RedisURI.Builder.redis(HOSTNAME)
                 .withPort(PORT)
-                //if (PASSWORD != null){
-                //   .withPassword("authentication")
-                //}
+                //if (PASSWORD != null){ .withPassword("authentication") }
                 //.withDatabase(2)
                 //.withTimeout(Duration.ofMillis(10))
                 .build();
-
         // Client作成
         RedisClusterClient client = RedisClusterClient.create(redisUri);
-
-        return client;
-
+        return client.connect();
     }
+
 }
